@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberSafe – Cybersecurity Awareness</title>
+  <meta name="description" content="CyberSafe helps individuals, students and businesses stay safe online with cybersecurity tips, a password safety checker and an awareness quiz.">
+  <meta name="theme-color" content="#071a3d">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23071a3d'/%3E%3Cpath d='M32 10 14 17v13c0 12 8 20 18 24 10-4 18-12 18-24V17z' fill='%232563eb'/%3E%3Cpath d='m24 32 6 6 11-12' stroke='%23fff' stroke-width='5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================================
+       1. DESIGN TOKENS
+       ========================================================= */
+    :root {
+      --navy-950: #040b1c;
+      --navy-900: #071a3d;
+      --navy-800: #0b2554;
+      --navy-700: #12336f;
+      --blue: #2563eb;
+      --blue-dark: #1d4fd8;
+      --blue-400: #4f8cff;
+      --cyan: #38bdf8;
+      --white: #ffffff;
+      --paper: #f3f6fc;
+      --line: #dbe3f1;
+      --ink: #0a1a3a;
+      --ink-2: #3b4b6b;
+      --muted: #6b7a99;
+      --ok: #16a34a;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --radius: 18px;
+      --shadow: 0 24px 60px -24px rgba(7, 26, 61, .45);
+      --shadow-sm: 0 8px 24px -12px rgba(7, 26, 61, .25);
+      --font-head: 'Sora', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-body: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+      --container: 1180px;
+    }
+
+    /* =========================================================
+       2. BASE / RESET
+       ========================================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body {
+      font-family: var(--font-body);
+      color: var(--ink);
+      background: var(--white);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    body.lock { overflow: hidden; }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    :focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .container { width: min(100% - 40px, var(--container)); margin-inline: auto; }
+    .ic {
+      width: 24px; height: 24px; flex-shrink: 0;
+      fill: none; stroke: currentColor; stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+    h1, h2, h3, h4 { font-family: var(--font-head); line-height: 1.15; letter-spacing: -.02em; }
+
+    /* =========================================================
+       3. SECTIONS & SHARED ELEMENTS
+       ========================================================= */
+    section { padding: 110px 0; position: relative; }
+    .section-dark { background: var(--navy-900); color: var(--white); overflow: hidden; }
+    .section-paper { background: var(--paper); }
+    .section-dark::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+      mask-image: radial-gradient(ellipse at center, #000 20%, transparent 75%);
+    }
+    .section-dark > .container { position: relative; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: .74rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--blue); background: rgba(37, 99, 235, .08);
+      border: 1px solid rgba(37, 99, 235, .2);
+      padding: 6px 12px; border-radius: 999px;
+    }
+    .eyebrow .ic { width: 15px; height: 15px; }
+    .section-dark .eyebrow, .hero .eyebrow {
+      color: var(--cyan); background: rgba(56, 189, 248, .08); border-color: rgba(56, 189, 248, .28);
+    }
+    .section-head { max-width: 700px; margin: 0 auto 56px; text-align: center; }
+    .section-head h2 { font-size: clamp(1.9rem, 3.6vw, 2.8rem); margin: 18px 0 14px; }
+    .section-head p { color: var(--ink-2); font-size: 1.06rem; }
+    .section-dark .section-head p { color: rgba(255, 255, 255, .72); }
+    .hl { color: var(--blue); }
+    .section-dark .hl { color: var(--cyan); }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 24px; border-radius: 12px; font-weight: 700; font-size: .98rem;
+      background: transparent; border: 2px solid transparent; transition: transform .25s, background .25s, box-shadow .25s, border-color .25s;
+      white-space: nowrap;
+    }
+    .btn .ic { width: 19px; height: 19px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
+    .btn-primary { background: var(--blue); color: var(--white); box-shadow: 0 12px 30px -12px rgba(37, 99, 235, .8); }
+    .btn-primary:hover:not(:disabled) { background: var(--blue-dark); transform: translateY(-2px); }
+    .btn-light { background: var(--white); color: var(--navy-900); }
+    .btn-light:hover { transform: translateY(-2px); box-shadow: 0 12px 30px -12px rgba(255, 255, 255, .5); }
+    .btn-outline { border-color: rgba(255, 255, 255, .3); color: var(--white); }
+    .btn-outline:hover { border-color: var(--white); background: rgba(255, 255, 255, .06); }
+    .btn-ghost { background: var(--paper); color: var(--navy-800); border-color: var(--line); }
+    .btn-ghost:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-sm { padding: 9px 16px; font-size: .88rem; border-radius: 10px; }
+    .btn-block { width: 100%; }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    .reveal.d1 { transition-delay: .1s; } .reveal.d2 { transition-delay: .2s; } .reveal.d3 { transition-delay: .3s; }
+
+    /* =========================================================
+       4. HEADER / NAVIGATION
+       ========================================================= */
+    .header { position: fixed; inset: 0 0 auto; z-index: 100; padding: 18px 0; transition: padding .3s, background .3s, box-shadow .3s; }
+    .header.scrolled { background: rgba(7, 26, 61, .97); padding: 11px 0; box-shadow: 0 10px 30px -15px rgba(0, 0, 0, .6); }
+    .nav-wrap { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-weight: 800; font-size: 1.35rem; color: var(--white); position: relative; z-index: 2; }
+    .logo-mark { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--blue), var(--cyan)); display: grid; place-items: center; color: var(--white); box-shadow: 0 8px 20px -8px rgba(56, 189, 248, .8); }
+    .logo-mark .ic { width: 22px; height: 22px; }
+    .logo b { color: var(--cyan); font-weight: 800; }
+    .nav { display: flex; align-items: center; gap: 2px; }
+    .nav a { color: rgba(255, 255, 255, .78); font-weight: 600; font-size: .9rem; padding: 8px 12px; border-radius: 8px; transition: color .2s, background .2s; }
+    .nav a:hover, .nav a.active { color: var(--white); background: rgba(255, 255, 255, .09); }
+    .nav a.nav-cta { margin-left: 10px; background: var(--blue); color: var(--white); padding: 10px 18px; }
+    .nav a.nav-cta:hover { background: var(--blue-dark); }
+    .menu-btn { display: none; place-items: center; width: 44px; height: 44px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .2); background: rgba(255, 255, 255, .06); color: var(--white); position: relative; z-index: 2; }
+    .nav-backdrop { position: fixed; inset: 0; background: rgba(4, 11, 28, .6); opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 0; }
+    .nav-backdrop.show { opacity: 1; pointer-events: auto; }
+
+    /* =========================================================
+       5. HERO
+       ========================================================= */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; padding: 140px 0 90px; overflow: hidden; color: var(--white);
+      background:
+        radial-gradient(1100px 600px at 85% 15%, rgba(37, 99, 235, .38), transparent 60%),
+        radial-gradient(700px 500px at 0% 100%, rgba(56, 189, 248, .16), transparent 60%),
+        var(--navy-950);
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(ellipse at 60% 40%, #000 25%, transparent 75%);
+      mask-image: radial-gradient(ellipse at 60% 40%, #000 25%, transparent 75%);
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 50px; align-items: center; position: relative; }
+    .hero h1 { font-size: clamp(2.4rem, 5.4vw, 4.1rem); margin: 22px 0 20px; font-weight: 800; }
+    .grad { background: linear-gradient(90deg, var(--cyan), var(--blue-400)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .lead { font-size: 1.15rem; color: rgba(255, 255, 255, .75); max-width: 540px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 34px; }
+    .hero-points { display: flex; flex-wrap: wrap; gap: 14px 26px; margin-top: 42px; color: rgba(255, 255, 255, .82); font-size: .92rem; font-weight: 600; }
+    .hero-points div { display: flex; align-items: center; gap: 8px; }
+    .hero-points .ic { color: var(--cyan); width: 18px; height: 18px; }
+    .hero-art { position: relative; max-width: 520px; width: 100%; margin-inline: auto; }
+    .float-card {
+      position: absolute; display: flex; align-items: center; gap: 12px;
+      background: rgba(11, 37, 84, .88); border: 1px solid rgba(255, 255, 255, .14);
+      padding: 11px 16px 11px 12px; border-radius: 14px; box-shadow: var(--shadow);
+      animation: float 6s ease-in-out infinite; font-size: .82rem; line-height: 1.3;
+    }
+    .float-card strong { display: block; font-size: .9rem; }
+    .float-card small { color: rgba(255, 255, 255, .6); }
+    .fc-ic { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; color: var(--white); }
+    .fc-ic .ic { width: 19px; height: 19px; }
+    .fc-ok { background: var(--ok); } .fc-bad { background: var(--bad); } .fc-blue { background: var(--blue); }
+    .fc-1 { top: 9%; left: -4%; }
+    .fc-2 { top: 46%; right: -6%; animation-delay: -2s; }
+    .fc-3 { bottom: 4%; left: 4%; animation-delay: -4s; }
+
+    /* SVG animations */
+    .spin, .spin-rev { transform-box: view-box; transform-origin: 50% 50%; animation: spin 40s linear infinite; }
+    .spin-rev { animation-duration: 60s; animation-direction: reverse; }
+    .flow { stroke-dasharray: 6 10; animation: flow 1.4s linear infinite; }
+    .pulse { transform-box: fill-box; transform-origin: center; animation: pulse 2.4s ease-in-out infinite; }
+    .scan { animation: scan 3.6s ease-in-out infinite; }
+    .bob { animation: float 5s ease-in-out infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes flow { to { stroke-dashoffset: -32; } }
+    @keyframes pulse { 0%, 100% { opacity: .45; transform: scale(1); } 50% { opacity: 1; transform: scale(1.35); } }
+    @keyframes scan { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(270px); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+
+    /* Threat ticker */
+    .ticker { background: var(--blue); color: var(--white); overflow: hidden; padding: 16px 0; }
+    .ticker-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
+    .ticker-track span { display: inline-flex; align-items: center; gap: 12px; padding: 0 26px; font-family: var(--font-mono); font-weight: 700; font-size: .85rem; text-transform: uppercase; letter-spacing: .1em; white-space: nowrap; }
+    .ticker-track .ic { width: 18px; height: 18px; color: var(--cyan); }
+
+    /* =========================================================
+       6. ABOUT
+       ========================================================= */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items: center; }
+    .about-art { background: linear-gradient(160deg, #eaf1ff, #f7faff); border-radius: 28px; padding: 26px; border: 1px solid var(--line); }
+    .about-text h2 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); margin: 18px 0 16px; }
+    .about-text > p { color: var(--ink-2); margin-bottom: 12px; }
+    .values { display: grid; gap: 14px; margin-top: 26px; }
+    .value { display: flex; gap: 16px; padding: 18px; border-radius: 16px; border: 1px solid var(--line); background: var(--white); transition: border-color .25s, transform .25s; }
+    .value:hover { border-color: var(--blue); transform: translateX(4px); }
+    .value-ic { width: 48px; height: 48px; border-radius: 12px; background: var(--navy-900); color: var(--cyan); display: grid; place-items: center; flex-shrink: 0; }
+    .value h3 { font-size: 1.04rem; margin-bottom: 4px; }
+    .value p { color: var(--ink-2); font-size: .93rem; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 70px; }
+    .stat { background: var(--navy-900); color: var(--white); border-radius: 18px; padding: 26px 18px; text-align: center; position: relative; overflow: hidden; }
+    .stat::after { content: ""; position: absolute; width: 120px; height: 120px; right: -40px; top: -40px; border-radius: 50%; background: radial-gradient(circle, rgba(56, 189, 248, .35), transparent 70%); }
+    .stat b { font-family: var(--font-head); font-size: 2.3rem; display: block; line-height: 1.1; }
+    .stat span { color: rgba(255, 255, 255, .7); font-size: .9rem; }
+
+    /* =========================================================
+       7. SERVICES
+       ========================================================= */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 30px; transition: transform .3s, box-shadow .3s; position: relative; overflow: hidden; }
+    .card::after { content: ""; position: absolute; left: 0; top: 0; height: 4px; width: 0; background: linear-gradient(90deg, var(--blue), var(--cyan)); transition: width .45s; }
+    .card:hover { transform: translateY(-6px); box-shadow: var(--shadow); }
+    .card:hover::after { width: 100%; }
+    .card-ic { width: 58px; height: 58px; border-radius: 16px; background: linear-gradient(135deg, var(--navy-800), var(--blue)); color: var(--white); display: grid; place-items: center; margin-bottom: 20px; }
+    .card-ic .ic { width: 28px; height: 28px; }
+    .card h3 { font-size: 1.2rem; margin-bottom: 10px; }
+    .card p { color: var(--ink-2); font-size: .96rem; }
+    .card ul { list-style: none; margin-top: 16px; display: grid; gap: 8px; }
+    .card li { display: flex; align-items: center; gap: 8px; font-size: .9rem; color: var(--ink-2); font-weight: 600; }
+    .card li .ic { width: 17px; height: 17px; color: var(--blue); stroke-width: 3; }
+
+    /* =========================================================
+       8. TIPS
+       ========================================================= */
+    .filters { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 40px; }
+    .filter { padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .2); background: transparent; color: rgba(255, 255, 255, .82); font-weight: 700; font-size: .88rem; transition: background .2s, color .2s; }
+    .filter:hover { background: rgba(255, 255, 255, .1); }
+    .filter.active { background: var(--white); color: var(--navy-900); border-color: var(--white); }
+    .tips-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .tip { background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .02)); border: 1px solid rgba(255, 255, 255, .11); border-radius: 18px; padding: 26px; transition: border-color .25s, transform .25s; animation: fadeUp .4s ease both; }
+    .tip:hover { border-color: rgba(56, 189, 248, .5); transform: translateY(-4px); }
+    .tip-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .tip-ic { width: 48px; height: 48px; border-radius: 14px; background: rgba(56, 189, 248, .12); color: var(--cyan); display: grid; place-items: center; }
+    .tag { font-family: var(--font-mono); font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--cyan); border: 1px solid rgba(56, 189, 248, .3); padding: 4px 10px; border-radius: 999px; }
+    .tip h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .tip p { color: rgba(255, 255, 255, .72); font-size: .93rem; }
+    .tip-day { margin-top: 44px; display: flex; align-items: center; gap: 22px; padding: 24px 28px; border-radius: 20px; background: linear-gradient(120deg, var(--blue), var(--navy-700)); box-shadow: var(--shadow); }
+    .tip-day-ic { width: 56px; height: 56px; border-radius: 16px; background: rgba(255, 255, 255, .15); display: grid; place-items: center; flex-shrink: 0; }
+    .tip-day-ic .ic { width: 28px; height: 28px; }
+    .tip-day-body { flex: 1; }
+    .tip-day-body small { font-family: var(--font-mono); letter-spacing: .12em; text-transform: uppercase; font-size: .72rem; opacity: .8; }
+    .tip-day-body p { font-weight: 700; font-size: 1.05rem; animation: fadeUp .4s ease both; }
+
+    /* =========================================================
+       9. PASSWORD CHECKER
+       ========================================================= */
+    .pw-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 28px; align-items: start; }
+    .panel { background: var(--white); border: 1px solid var(--line); border-radius: 22px; padding: 32px; box-shadow: var(--shadow-sm); }
+    .panel-title { display: flex; align-items: center; gap: 12px; font-size: 1.2rem; margin-bottom: 20px; }
+    .panel-title .ic { color: var(--blue); }
+    .pw-input { position: relative; }
+    .pw-input input { width: 100%; padding: 18px 60px 18px 20px; border-radius: 14px; border: 2px solid var(--line); font-family: var(--font-mono); font-size: 1.05rem; background: var(--paper); outline: none; transition: border-color .2s, background .2s; }
+    .pw-input input:focus { border-color: var(--blue); background: var(--white); }
+    .icon-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 10px; border: none; background: transparent; color: var(--muted); display: grid; place-items: center; }
+    .icon-btn:hover { background: var(--paper); color: var(--blue); }
+    .meter { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 20px 0 10px; }
+    .meter i { display: block; height: 9px; background: var(--line); border-radius: 99px; transition: background .3s; }
+    .strength-row { display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-size: .95rem; }
+    .strength-row span:last-child { color: var(--muted); font-weight: 600; font-size: .85rem; }
+    .checks { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0; }
+    .checks li { display: flex; align-items: center; gap: 10px; font-size: .9rem; color: var(--muted); font-weight: 600; transition: color .2s; }
+    .dot { width: 22px; height: 22px; border-radius: 50%; background: var(--paper); border: 1px solid var(--line); display: grid; place-items: center; flex-shrink: 0; color: transparent; transition: background .2s; }
+    .dot .ic { width: 13px; height: 13px; stroke-width: 3.5; }
+    .checks li.ok { color: var(--ink); }
+    .checks li.ok .dot { background: var(--ok); border-color: var(--ok); color: var(--white); }
+    .pw-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .pw-stat { background: var(--paper); border-radius: 14px; padding: 14px; }
+    .pw-stat small { color: var(--muted); font-size: .76rem; display: block; font-weight: 600; }
+    .pw-stat b { font-family: var(--font-head); font-size: 1rem; }
+    .feedback { margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: var(--paper); color: var(--ink-2); font-size: .9rem; display: flex; gap: 10px; align-items: flex-start; }
+    .feedback .ic { width: 20px; height: 20px; margin-top: 1px; }
+    .feedback ul { padding-left: 18px; }
+    .feedback.is-weak { background: #fef2f2; color: #991b1b; }
+    .feedback.is-fair { background: #fff7e6; color: #8a5300; }
+    .feedback.is-strong { background: #effaf3; color: #166534; }
+    .privacy { display: flex; gap: 8px; align-items: center; margin-top: 18px; font-size: .82rem; color: var(--muted); font-weight: 600; }
+    .privacy .ic { width: 16px; height: 16px; color: var(--ok); }
+    .gen { background: var(--navy-900); color: var(--white); border-color: var(--navy-900); }
+    .gen .panel-title .ic { color: var(--cyan); }
+    .gen-output { display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .12); border-radius: 12px; padding: 10px 10px 10px 16px; min-height: 58px; }
+    .gen-output code { flex: 1; font-family: var(--font-mono); font-size: 1rem; word-break: break-all; color: var(--cyan); }
+    .gen-output .icon-btn { position: static; transform: none; color: rgba(255, 255, 255, .7); }
+    .gen-output .icon-btn:hover { background: rgba(255, 255, 255, .1); color: var(--white); }
+    .gen-row { display: flex; justify-content: space-between; font-weight: 700; font-size: .9rem; margin: 22px 0 8px; }
+    input[type=range] { width: 100%; accent-color: var(--cyan); }
+    .gen-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0 24px; }
+    .gen-opts label { display: flex; gap: 10px; align-items: center; cursor: pointer; font-size: .9rem; font-weight: 600; color: rgba(255, 255, 255, .85); }
+    input[type=checkbox] { accent-color: var(--cyan); width: 18px; height: 18px; }
+    .gen-actions { display: grid; gap: 10px; }
+    .advice { margin-top: 22px; }
+    .advice h4 { font-size: 1rem; margin-bottom: 12px; }
+    .advice ul { list-style: none; display: grid; gap: 10px; }
+    .advice li { display: flex; gap: 10px; font-size: .9rem; color: var(--ink-2); }
+    .advice li .ic { width: 18px; height: 18px; color: var(--blue); margin-top: 2px; }
+
+    /* =========================================================
+       10. QUIZ
+       ========================================================= */
+    .quiz-card { max-width: 800px; margin: 0 auto; background: var(--white); color: var(--ink); border-radius: 26px; padding: 42px; box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .7); min-height: 420px; }
+    .quiz-intro, .quiz-result { text-align: center; animation: fadeUp .4s ease both; }
+    .quiz-badge { width: 84px; height: 84px; border-radius: 24px; margin: 0 auto 22px; display: grid; place-items: center; color: var(--white); background: linear-gradient(135deg, var(--navy-800), var(--blue)); box-shadow: var(--shadow); }
+    .quiz-badge .ic { width: 40px; height: 40px; }
+    .quiz-intro h3, .quiz-result h3 { font-size: 1.7rem; margin-bottom: 10px; }
+    .quiz-intro p, .quiz-result p { color: var(--ink-2); max-width: 520px; margin: 0 auto; }
+    .quiz-meta { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; margin: 24px 0 30px; }
+    .quiz-meta span { display: inline-flex; align-items: center; gap: 8px; background: var(--paper); padding: 8px 14px; border-radius: 999px; font-size: .85rem; font-weight: 700; color: var(--navy-800); }
+    .quiz-meta .ic { width: 16px; height: 16px; color: var(--blue); }
+    .best { margin-top: 16px; font-size: .88rem; color: var(--muted); font-weight: 600; }
+    .quiz-top { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: .88rem; color: var(--muted); }
+    .quiz-top span { display: inline-flex; align-items: center; gap: 6px; }
+    .quiz-top .ic { width: 17px; height: 17px; color: var(--blue); }
+    .progress { height: 8px; background: var(--paper); border-radius: 99px; margin: 14px 0 28px; overflow: hidden; }
+    .progress i { display: block; height: 100%; background: linear-gradient(90deg, var(--blue), var(--cyan)); border-radius: 99px; transition: width .45s ease; }
+    .q-text { font-size: 1.35rem; margin-bottom: 24px; animation: fadeUp .35s ease both; }
+    .options { display: grid; gap: 12px; }
+    .opt { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; padding: 15px 18px; border-radius: 14px; border: 2px solid var(--line); background: var(--white); font-weight: 600; transition: border-color .2s, background .2s; animation: fadeUp .35s ease both; }
+    .opt:hover:not(:disabled) { border-color: var(--blue); background: #f5f8ff; }
+    .opt:disabled { cursor: default; }
+    .letter { width: 32px; height: 32px; border-radius: 9px; background: var(--paper); display: grid; place-items: center; font-family: var(--font-mono); font-size: .85rem; font-weight: 700; flex-shrink: 0; }
+    .opt.correct { border-color: var(--ok); background: #effaf3; }
+    .opt.correct .letter { background: var(--ok); color: var(--white); }
+    .opt.wrong { border-color: var(--bad); background: #fef2f2; }
+    .opt.wrong .letter { background: var(--bad); color: var(--white); }
+    .opt.dim { opacity: .55; }
+    .explain { margin-top: 20px; padding: 16px 18px; border-radius: 14px; background: #effaf3; border-left: 4px solid var(--ok); font-size: .95rem; display: none; color: var(--ink-2); }
+    .explain.bad { background: #fef2f2; border-left-color: var(--bad); }
+    .explain.show { display: block; animation: fadeUp .35s ease both; }
+    .explain strong { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); }
+    .explain strong .ic { width: 17px; height: 17px; stroke-width: 3; }
+    .quiz-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 26px; gap: 12px; }
+    .score-ring { width: 170px; height: 170px; margin: 0 auto 22px; position: relative; }
+    .score-ring svg { transform: rotate(-90deg); width: 170px; height: 170px; }
+    .score-ring .ring-val { transition: stroke-dashoffset 1.2s ease; }
+    .score-ring .val { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--font-head); font-size: 2.1rem; font-weight: 800; }
+    .rank { display: inline-block; margin: 6px 0 12px; font-family: var(--font-mono); font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; background: var(--navy-900); color: var(--cyan); }
+    .result-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+    .review { text-align: left; margin-top: 28px; display: none; gap: 10px; max-height: 360px; overflow: auto; padding-right: 4px; }
+    .review.show { display: grid; }
+    .review-item { padding: 12px 16px; border-radius: 12px; background: var(--paper); font-size: .9rem; border-left: 4px solid var(--ok); }
+    .review-item.bad { border-left-color: var(--bad); }
+    .review-item b { display: block; margin-bottom: 4px; color: var(--ink); }
+    .review-item span { color: var(--ink-2); display: block; }
+
+    /* =========================================================
+       11. CONTACT
+       ========================================================= */
+    .contact-grid { display: grid; grid-template-columns: .85fr 1.15fr; gap: 28px; align-items: stretch; }
+    .contact-info { background: var(--navy-900); color: var(--white); border-radius: 24px; padding: 36px; position: relative; overflow: hidden; }
+    .contact-info::after { content: ""; position: absolute; width: 260px; height: 260px; right: -90px; bottom: -90px; border-radius: 50%; background: radial-gradient(circle, rgba(37, 99, 235, .55), transparent 70%); }
+    .contact-info h3 { font-size: 1.4rem; margin-bottom: 8px; }
+    .contact-info > p { color: rgba(255, 255, 255, .7); }
+    .info-item { display: flex; gap: 14px; margin-top: 22px; position: relative; z-index: 1; }
+    .info-ic { width: 46px; height: 46px; border-radius: 12px; background: rgba(56, 189, 248, .12); color: var(--cyan); display: grid; place-items: center; flex-shrink: 0; }
+    .info-item small { display: block; color: rgba(255, 255, 255, .6); font-size: .8rem; font-weight: 600; }
+    .info-item a:hover { color: var(--cyan); }
+    .help-box { margin-top: 30px; padding: 20px; border-radius: 16px; background: rgba(239, 68, 68, .12); border: 1px solid rgba(239, 68, 68, .35); position: relative; z-index: 1; }
+    .help-box h4 { display: flex; align-items: center; gap: 8px; font-size: 1rem; margin-bottom: 8px; }
+    .help-box h4 .ic { color: #fca5a5; width: 20px; height: 20px; }
+    .help-box ol { padding-left: 18px; color: rgba(255, 255, 255, .8); font-size: .88rem; display: grid; gap: 4px; }
+    .help-box a { color: var(--cyan); font-weight: 700; }
+    .form-card { background: var(--white); border-radius: 24px; padding: 36px; border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+    .form-card h3 { font-size: 1.4rem; margin-bottom: 6px; }
+    .form-card > p { color: var(--ink-2); margin-bottom: 24px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-weight: 700; font-size: .88rem; margin-bottom: 8px; }
+    .field input, .field select, .field textarea { width: 100%; padding: 14px 16px; border-radius: 12px; border: 2px solid var(--line); background: var(--paper); outline: none; transition: border-color .2s, background .2s; }
+    .field textarea { min-height: 140px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); background: var(--white); }
+    .field.error input, .field.error select, .field.error textarea { border-color: var(--bad); background: #fffafa; }
+    .field-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 6px; font-size: .8rem; }
+    .err { color: var(--bad); font-weight: 600; visibility: hidden; }
+    .field.error .err { visibility: visible; }
+    .count { color: var(--muted); margin-left: auto; }
+    .consent { display: flex; gap: 10px; align-items: flex-start; font-size: .88rem; color: var(--ink-2); margin-bottom: 20px; }
+    .consent input { accent-color: var(--blue); margin-top: 3px; }
+    .form-success { display: none; text-align: center; padding: 40px 10px; animation: fadeUp .4s ease both; }
+    .form-success .quiz-badge { background: linear-gradient(135deg, #15803d, var(--ok)); }
+    .form-success h3 { font-size: 1.5rem; margin-bottom: 8px; }
+    .form-success p { color: var(--ink-2); margin-bottom: 22px; }
+    .form-card.sent form, .form-card.sent > h3, .form-card.sent > p { display: none; }
+    .form-card.sent .form-success { display: block; }
+
+    /* =========================================================
+       12. FOOTER, TOAST, BACK-TO-TOP
+       ========================================================= */
+    .footer { background: var(--navy-950); color: rgba(255, 255, 255, .68); padding: 72px 0 28px; }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1.3fr; gap: 40px; }
+    .footer p { font-size: .92rem; margin-top: 16px; max-width: 300px; }
+    .footer h4 { color: var(--white); font-size: 1rem; margin-bottom: 16px; }
+    .footer ul { list-style: none; display: grid; gap: 10px; font-size: .92rem; }
+    .footer a:hover { color: var(--cyan); }
+    .news { display: flex; gap: 8px; margin-top: 4px; }
+    .news input { flex: 1; min-width: 0; padding: 12px 14px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .15); background: rgba(255, 255, 255, .06); color: var(--white); outline: none; }
+    .news input::placeholder { color: rgba(255, 255, 255, .45); }
+    .news input:focus { border-color: var(--cyan); }
+    .footer-bottom { border-top: 1px solid rgba(255, 255, 255, .08); margin-top: 50px; padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-size: .86rem; }
+    .to-top { position: fixed; right: 22px; bottom: 22px; width: 48px; height: 48px; border-radius: 14px; border: none; background: var(--blue); color: var(--white); display: grid; place-items: center; box-shadow: var(--shadow); opacity: 0; transform: translateY(20px); pointer-events: none; transition: opacity .3s, transform .3s; z-index: 90; }
+    .to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+    .toast { position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 30px); background: var(--navy-900); color: var(--white); padding: 13px 20px; border-radius: 12px; display: flex; gap: 10px; align-items: center; font-weight: 600; font-size: .92rem; box-shadow: var(--shadow); opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s; z-index: 200; max-width: calc(100% - 40px); }
+    .toast .ic { color: var(--cyan); width: 20px; height: 20px; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    /* =========================================================
+       13. RESPONSIVE
+       ========================================================= */
+    @media (max-width: 1080px) {
+      .menu-btn { display: grid; }
+      .nav {
+        position: fixed; top: 0; right: 0; height: 100vh; height: 100dvh; width: min(320px, 86vw);
+        flex-direction: column; align-items: stretch; gap: 4px;
+        background: var(--navy-950); padding: 92px 20px 30px; border-left: 1px solid rgba(255, 255, 255, .08);
+        transform: translateX(100%); transition: transform .35s ease; z-index: 1; overflow-y: auto;
+      }
+      .nav.open { transform: none; }
+      .nav a { padding: 13px 16px; font-size: 1rem; }
+      .nav a.nav-cta { margin: 14px 0 0; text-align: center; }
+    }
+    @media (max-width: 980px) {
+      section { padding: 90px 0; }
+      .hero-grid, .about-grid, .pw-grid, .contact-grid { grid-template-columns: 1fr; }
+      .hero { padding-top: 120px; text-align: center; }
+      .lead { margin-inline: auto; }
+      .hero-actions, .hero-points { justify-content: center; }
+      .hero-art { max-width: 440px; }
+      .about-grid { gap: 44px; }
+      .cards, .tips-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      section { padding: 72px 0; }
+      .container { width: min(100% - 32px, var(--container)); }
+      .cards, .tips-grid, .checks, .form-row, .gen-opts { grid-template-columns: 1fr; }
+      .pw-stats { grid-template-columns: 1fr 1fr; }
+      .pw-stats .pw-stat:last-child { grid-column: span 2; }
+      .panel, .contact-info, .form-card { padding: 24px; }
+      .quiz-card { padding: 26px 20px; border-radius: 20px; }
+      .q-text { font-size: 1.15rem; }
+      .hero-actions .btn { width: 100%; }
+      .float-card { font-size: .74rem; padding: 8px 12px 8px 8px; }
+      .fc-ic { width: 30px; height: 30px; }
+      .fc-1 { left: 0; } .fc-2 { right: 0; } .fc-3 { left: 2%; }
+      .tip-day { flex-direction: column; text-align: center; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .stat b { font-size: 1.9rem; }
+      .quiz-foot .btn { padding: 12px 16px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================
+       ICON SPRITE (reusable inline SVG icons)
+       ========================================================= -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-user-check" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="m17 11 2 2 4-4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3L22 7l-3-3"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-smartphone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-wifi" viewBox="0 0 24 24"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><path d="M12 20h.01"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><path d="m1 1 22 22"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><path d="M8.21 13.89 7 23l5-3 5 3-1.21-9.12"/></symbol>
+    <symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="m9 14 2 2 4-4"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+    <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4 20-7z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.74V17h8v-2.26A7 7 0 0 0 12 2z"/></symbol>
+  </svg>
+
+  <!-- =========================================================
+       HEADER
+       ========================================================= -->
+  <header class="header" id="header">
+    <div class="container nav-wrap">
+      <a href="#home" class="logo" aria-label="CyberSafe home">
+        <span class="logo-mark"><svg class="ic"><use href="#i-shield-check"/></svg></span>
+        <span>Cyber<b>Safe</b></span>
+      </a>
+      <nav class="nav" id="nav" aria-label="Main navigation">
+        <a href="#home" class="active">Home</a>
+        <a href="#about">About Us</a>
+        <a href="#services">Services</a>
+        <a href="#tips">Cyber Tips</a>
+        <a href="#password">Password Checker</a>
+        <a href="#quiz">Quiz</a>
+        <a href="#contact">Contact Us</a>
+        <a href="#quiz" class="nav-cta">Take the Quiz</a>
+      </nav>
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="nav">
+        <svg class="ic"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+    <div class="nav-backdrop" id="navBackdrop"></div>
+  </header>
+
+  <main>
+    <!-- =========================================================
+         HOME / HERO
+         ========================================================= -->
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div class="hero-text reveal">
+          <span class="eyebrow"><svg class="ic"><use href="#i-shield"/></svg> Cybersecurity Awareness</span>
+          <h1>Stay one step ahead of <span class="grad">cyber threats.</span></h1>
+          <p class="lead">CyberSafe helps you, your family and your organisation recognise online dangers, protect personal data and build smart, safe digital habits.</p>
+          <div class="hero-actions">
+            <a href="#password" class="btn btn-primary"><svg class="ic"><use href="#i-key"/></svg> Check Your Password</a>
+            <a href="#quiz" class="btn btn-outline"><svg class="ic"><use href="#i-target"/></svg> Take the Quiz</a>
+          </div>
+          <div class="hero-points">
+            <div><svg class="ic"><use href="#i-check"/></svg> Free awareness resources</div>
+            <div><svg class="ic"><use href="#i-check"/></svg> Practical, jargon-free tips</div>
+            <div><svg class="ic"><use href="#i-check"/></svg> 100% private browser tools</div>
+          </div>
+        </div>
+
+        <div class="hero-art reveal d2">
+          <svg viewBox="0 0 520 520" role="img" aria-label="Glowing security shield with a padlock and network connections">
+            <defs>
+              <radialGradient id="hg-glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#2563eb" stop-opacity=".55"/>
+                <stop offset="1" stop-color="#2563eb" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="hg-shield" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2f6bff"/>
+                <stop offset="1" stop-color="#0b2554"/>
+              </linearGradient>
+              <linearGradient id="hg-edge" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#7dd3fc"/>
+                <stop offset="1" stop-color="#2563eb"/>
+              </linearGradient>
+              <filter id="hg-blur"><feGaussianBlur stdDeviation="18"/></filter>
+              <clipPath id="hg-clip"><path d="M260 90 L380 135 V250 C380 340 325 400 260 430 C195 400 140 340 140 250 V135 Z"/></clipPath>
+            </defs>
+
+            <circle cx="260" cy="260" r="250" fill="url(#hg-glow)"/>
+
+            <g class="spin">
+              <circle cx="260" cy="260" r="225" fill="none" stroke="#38bdf8" stroke-opacity=".4" stroke-dasharray="2 10"/>
+              <circle cx="260" cy="35" r="6" fill="#38bdf8"/>
+            </g>
+            <g class="spin-rev">
+              <circle cx="260" cy="260" r="185" fill="none" stroke="#ffffff" stroke-opacity=".13" stroke-width="1.5" stroke-dasharray="60 24"/>
+              <circle cx="445" cy="260" r="5" fill="#ffffff"/>
+            </g>
+
+            <g font-family="JetBrains Mono, monospace" font-size="12" fill="#7dd3fc" opacity=".4">
+              <text x="40" y="70">01001011</text>
+              <text x="390" y="62">0x7F3A</text>
+              <text x="370" y="470">11010010</text>
+              <text x="24" y="460">TLS 1.3</text>
+            </g>
+
+            <g stroke="#38bdf8" stroke-width="2" fill="none" stroke-opacity=".75" class="flow">
+              <path d="M140 190 H95 V130 H55"/>
+              <path d="M140 290 H80 V350 H40"/>
+              <path d="M380 180 H430 V120 H470"/>
+              <path d="M380 300 H440 V380 H480"/>
+              <path d="M260 430 V480 H200"/>
+            </g>
+            <g fill="#38bdf8">
+              <circle cx="55" cy="130" r="6" class="pulse"/>
+              <circle cx="40" cy="350" r="6" class="pulse" style="animation-delay:-.6s"/>
+              <circle cx="470" cy="120" r="6" class="pulse" style="animation-delay:-1.2s"/>
+              <circle cx="480" cy="380" r="6" class="pulse" style="animation-delay:-1.8s"/>
+              <circle cx="200" cy="480" r="6" class="pulse" style="animation-delay:-.9s"/>
+            </g>
+
+            <path d="M260 90 L380 135 V250 C380 340 325 400 260 430 C195 400 140 340 140 250 V135 Z" fill="#2563eb" opacity=".55" filter="url(#hg-blur)"/>
+            <path d="M260 90 L380 135 V250 C380 340 325 400 260 430 C195 400 140 340 140 250 V135 Z" fill="url(#hg-shield)" stroke="url(#hg-edge)" stroke-width="4"/>
+            <path d="M260 115 L358 152 V250 C358 325 312 378 260 404 C208 378 162 325 162 250 V152 Z" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="2"/>
+
+            <path d="M228 252 V222 a32 32 0 0 1 64 0 V252" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+            <rect x="206" y="246" width="108" height="88" rx="16" fill="#ffffff"/>
+            <circle cx="260" cy="282" r="11" fill="#0b2554"/>
+            <rect x="255" y="286" width="10" height="24" rx="5" fill="#0b2554"/>
+
+            <g clip-path="url(#hg-clip)">
+              <rect class="scan" x="130" y="120" width="260" height="4" fill="#7dd3fc" opacity=".7"/>
+            </g>
+          </svg>
+
+          <div class="float-card fc-1"><span class="fc-ic fc-ok"><svg class="ic"><use href="#i-shield-check"/></svg></span><span><strong>Firewall Active</strong><small>All systems protected</small></span></div>
+          <div class="float-card fc-2"><span class="fc-ic fc-bad"><svg class="ic"><use href="#i-mail"/></svg></span><span><strong>Phishing Blocked</strong><small>Suspicious link stopped</small></span></div>
+          <div class="float-card fc-3"><span class="fc-ic fc-blue"><svg class="ic"><use href="#i-lock"/></svg></span><span><strong>2FA Enabled</strong><small>Account secured</small></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Threat ticker -->
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+
+    <!-- =========================================================
+         ABOUT US
+         ========================================================= -->
+    <section id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-art reveal">
+            <svg viewBox="0 0 480 400" role="img" aria-label="Illustration of a protected laptop surrounded by security icons">
+              <defs>
+                <linearGradient id="ag1" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#2563eb"/>
+                  <stop offset="1" stop-color="#38bdf8"/>
+                </linearGradient>
+              </defs>
+              <circle cx="240" cy="190" r="150" fill="#dbe7ff"/>
+              <circle cx="240" cy="190" r="108" fill="#c7d9ff" opacity=".6"/>
+
+              <rect x="100" y="90" width="280" height="180" rx="14" fill="#071a3d"/>
+              <rect x="112" y="102" width="256" height="156" rx="6" fill="#0b2554"/>
+              <g fill="#38bdf8">
+                <rect x="126" y="118" width="60" height="6" rx="3"/>
+                <rect x="126" y="132" width="90" height="6" rx="3" opacity=".5"/>
+                <rect x="136" y="146" width="44" height="6" rx="3" opacity=".75"/>
+                <rect x="136" y="160" width="74" height="6" rx="3" opacity=".4"/>
+              </g>
+              <g fill="#ffffff" opacity=".25">
+                <rect x="126" y="186" width="80" height="6" rx="3"/>
+                <rect x="126" y="200" width="56" height="6" rx="3"/>
+              </g>
+              <text x="126" y="225" font-family="JetBrains Mono, monospace" font-size="10" fill="#7dd3fc">SCANNING… 72%</text>
+              <rect x="126" y="234" width="110" height="8" rx="4" fill="#ffffff" opacity=".12"/>
+              <rect x="126" y="234" width="79" height="8" rx="4" fill="url(#ag1)"/>
+              <path d="M300 122 l44 16 v32 c0 30 -20 50 -44 60 c-24 -10 -44 -30 -44 -60 v-32 z" fill="url(#ag1)"/>
+              <path d="M284 172 l11 11 l22 -24" stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <path d="M70 270 h340 l-22 26 a8 8 0 0 1 -6 3 h-284 a8 8 0 0 1 -6 -3 z" fill="#b8c9ea"/>
+              <rect x="210" y="270" width="60" height="6" rx="3" fill="#8fa6d4"/>
+
+              <g class="bob">
+                <circle cx="78" cy="100" r="34" fill="#ffffff" stroke="#dbe3f1" stroke-width="2"/>
+                <use href="#i-mail" x="62" y="84" width="32" height="32" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g class="bob" style="animation-delay:-1.5s">
+                <circle cx="410" cy="78" r="32" fill="#071a3d"/>
+                <use href="#i-key" x="395" y="63" width="30" height="30" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g class="bob" style="animation-delay:-3s">
+                <circle cx="425" cy="250" r="30" fill="#ffffff" stroke="#dbe3f1" stroke-width="2"/>
+                <use href="#i-wifi" x="411" y="236" width="28" height="28" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <g class="bob" style="animation-delay:-2.2s">
+                <circle cx="56" cy="236" r="30" fill="#2563eb"/>
+                <use href="#i-user-check" x="42" y="222" width="28" height="28" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+
+              <rect x="160" y="320" width="160" height="38" rx="19" fill="#071a3d"/>
+              <circle cx="184" cy="339" r="6" fill="#22c55e" class="pulse"/>
+              <text x="198" y="344" font-family="JetBrains Mono, monospace" font-size="13" font-weight="700" fill="#ffffff" letter-spacing="1.5">SYSTEM SECURE</text>
+            </svg>
+          </div>
+
+          <div class="about-text reveal d1">
+            <span class="eyebrow"><svg class="ic"><use href="#i-users"/></svg> About Us</span>
+            <h2>Making the internet a <span class="hl">safer place</span> for everyone.</h2>
+            <p>CyberSafe is a cybersecurity awareness initiative dedicated to educating people about online threats and how to defend against them. Most cyber attacks succeed because of simple human mistakes — a weak password, a rushed click, an outdated device.</p>
+            <p>Our mission is to turn everyday internet users into confident digital citizens through clear guidance, interactive tools and hands-on training.</p>
+            <div class="values">
+              <div class="value">
+                <span class="value-ic"><svg class="ic"><use href="#i-book"/></svg></span>
+                <div><h3>Educate</h3><p>Simple, practical lessons on phishing, passwords, privacy and safe browsing.</p></div>
+              </div>
+              <div class="value">
+                <span class="value-ic"><svg class="ic"><use href="#i-zap"/></svg></span>
+                <div><h3>Empower</h3><p>Interactive tools that let you test and improve your security habits instantly.</p></div>
+              </div>
+              <div class="value">
+                <span class="value-ic"><svg class="ic"><use href="#i-shield-check"/></svg></span>
+                <div><h3>Protect</h3><p>Helping individuals, schools and businesses reduce risk and respond to incidents.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat reveal"><b data-count="15" data-suffix="+">0</b><span>Expert safety tips</span></div>
+          <div class="stat reveal d1"><b data-count="10">0</b><span>Quiz questions</span></div>
+          <div class="stat reveal d2"><b data-count="6">0</b><span>Awareness services</span></div>
+          <div class="stat reveal d3"><b data-count="100" data-suffix="%">0</b><span>Private, in-browser checks</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         SERVICES
+         ========================================================= -->
+    <section class="section-paper" id="services">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow"><svg class="ic"><use href="#i-cpu"/></svg> Our Services</span>
+          <h2>How CyberSafe <span class="hl">protects you</span></h2>
+          <p>From awareness training to security check-ups, our services are designed to strengthen the human side of cybersecurity.</p>
+        </div>
+        <div class="cards" id="servicesGrid"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CYBERSECURITY TIPS
+         ========================================================= -->
+    <section class="section-dark" id="tips">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow"><svg class="ic"><use href="#i-bulb"/></svg> Cybersecurity Tips</span>
+          <h2>Simple habits, <span class="hl">powerful protection</span></h2>
+          <p>Filter by topic to find practical advice you can apply today — no technical knowledge required.</p>
+        </div>
+        <div class="filters" id="tipFilters" role="tablist" aria-label="Filter tips by category"></div>
+        <div class="tips-grid" id="tipsGrid"></div>
+
+        <div class="tip-day reveal">
+          <span class="tip-day-ic"><svg class="ic"><use href="#i-bulb"/></svg></span>
+          <div class="tip-day-body">
+            <small>Quick tip</small>
+            <p id="quickTip">Loading tip…</p>
+          </div>
+          <button class="btn btn-light btn-sm" id="nextTip"><svg class="ic"><use href="#i-refresh"/></svg> Another tip</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         PASSWORD SAFETY CHECKER
+         ========================================================= -->
+    <section id="password">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow"><svg class="ic"><use href="#i-key"/></svg> Password Safety Checker</span>
+          <h2>How strong is <span class="hl">your password?</span></h2>
+          <p>Type a password to see its strength, how long it might take to crack, and how to improve it.</p>
+        </div>
+
+        <div class="pw-grid">
+          <div class="panel reveal">
+            <h3 class="panel-title"><svg class="ic"><use href="#i-search"/></svg> Check a password</h3>
+            <div class="pw-input">
+              <label for="pwInput" class="sr-only">Password to check</label>
+              <input type="password" id="pwInput" placeholder="Enter a password to test…" autocomplete="off" spellcheck="false">
+              <button class="icon-btn" id="pwToggle" type="button" aria-label="Show password"><svg class="ic"><use href="#i-eye"/></svg></button>
+            </div>
+            <div class="meter" id="pwMeter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="strength-row" aria-live="polite"><span id="pwLabel">Start typing…</span><span id="pwScore">Score: –/4</span></div>
+
+            <ul class="checks" id="pwChecks">
+              <li data-check="length"><span class="dot"><svg class="ic"><use href="#i-check"/></svg></span> At least 12 characters</li>
+              <li data-check="upper"><span class="dot"><svg class="ic"><use href="#i-check"/></svg></span> Uppercase letter (A–Z)</li>
+              <li data-check="lower"><span class="dot"><svg class="ic"><use href="#i-check"/></svg></span> Lowercase letter (a–z)</li>
+              <li data-check="number"><span class="dot"><svg class="ic"><use href="#i-check"/></svg></span> Number (0–9)</li>
+              <li data-check="symbol"><span class="dot"><svg class="ic"><use href="#i-check"/></svg></span> Special symbol (!@#$…)</li>
+              <li data-check="common"><span class="dot"><svg class="ic"><use href="#i-check"/></svg></span> Not a common password</li>
+            </ul>
+
+            <div class="pw-stats">
+              <div class="pw-stat"><small>Length</small><b id="pwLen">0</b></div>
+              <div class="pw-stat"><small>Entropy</small><b id="pwEntropy">0 bits</b></div>
+              <div class="pw-stat"><small>Time to crack*</small><b id="pwCrack">–</b></div>
+            </div>
+            <div class="feedback" id="pwFeedback"><svg class="ic"><use href="#i-bulb"/></svg><div>Tip: a long passphrase like <strong>Coffee!River-Moon-47</strong> is easier to remember and harder to crack than <strong>P@ss1</strong>.</div></div>
+            <p class="privacy"><svg class="ic"><use href="#i-lock"/></svg> Your password never leaves your device — all checks run locally in your browser.</p>
+            <p class="privacy" style="margin-top:6px">* Estimated for an offline attack at 10 billion guesses per second.</p>
+          </div>
+
+          <div class="panel gen reveal d1">
+            <h3 class="panel-title"><svg class="ic"><use href="#i-zap"/></svg> Strong password generator</h3>
+            <div class="gen-output">
+              <code id="genOut">Click generate</code>
+              <button class="icon-btn" id="genCopy" type="button" aria-label="Copy password"><svg class="ic"><use href="#i-copy"/></svg></button>
+            </div>
+            <div class="gen-row"><label for="genLen">Length</label><span id="genLenVal">16</span></div>
+            <input type="range" id="genLen" min="8" max="32" value="16">
+            <div class="gen-opts">
+              <label><input type="checkbox" id="g-upper" checked> Uppercase</label>
+              <label><input type="checkbox" id="g-lower" checked> Lowercase</label>
+              <label><input type="checkbox" id="g-number" checked> Numbers</label>
+              <label><input type="checkbox" id="g-symbol" checked> Symbols</label>
+            </div>
+            <div class="gen-actions">
+              <button class="btn btn-primary btn-block" id="genBtn" type="button"><svg class="ic"><use href="#i-refresh"/></svg> Generate password</button>
+              <button class="btn btn-outline btn-block" id="genUse" type="button"><svg class="ic"><use href="#i-search"/></svg> Test this password</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel advice reveal" style="margin-top:28px">
+          <h4>What makes a password strong?</h4>
+          <ul>
+            <li><svg class="ic"><use href="#i-check"/></svg> <span><strong>Length matters most.</strong> Every extra character multiplies the number of guesses an attacker needs.</span></li>
+            <li><svg class="ic"><use href="#i-check"/></svg> <span><strong>Be unique.</strong> Never reuse a password — if one site is breached, the rest stay safe.</span></li>
+            <li><svg class="ic"><use href="#i-check"/></svg> <span><strong>Avoid personal info.</strong> Names, birthdays, pet names and phone numbers are easy to guess.</span></li>
+            <li><svg class="ic"><use href="#i-check"/></svg> <span><strong>Add two-factor authentication.</strong> Even a stolen password is useless without the second factor.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CYBERSECURITY AWARENESS QUIZ
+         ========================================================= -->
+    <section class="section-dark" id="quiz">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow"><svg class="ic"><use href="#i-target"/></svg> Awareness Quiz</span>
+          <h2>Test your <span class="hl">cyber smarts</span></h2>
+          <p>Answer 10 quick questions to find out how well you can spot online threats. You get instant feedback on every answer.</p>
+        </div>
+        <div class="quiz-card reveal" id="quizBody" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         CONTACT US
+         ========================================================= -->
+    <section class="section-paper" id="contact">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow"><svg class="ic"><use href="#i-message"/></svg> Contact Us</span>
+          <h2>Let's talk about <span class="hl">your security</span></h2>
+          <p>Have a question, want to book a workshop or report a suspicious message? Send us a note and we'll get back to you.</p>
+        </div>
+
+        <div class="contact-grid">
+          <aside class="contact-info reveal">
+            <h3>Get in touch</h3>
+            <p>Our team usually replies within one business day.</p>
+            <div class="info-item">
+              <span class="info-ic"><svg class="ic"><use href="#i-mail"/></svg></span>
+              <div><small>Email</small><a href="mailto:support@cybersafe.org">support@cybersafe.org</a></div>
+            </div>
+            <div class="info-item">
+              <span class="info-ic"><svg class="ic"><use href="#i-phone"/></svg></span>
+              <div><small>Phone</small><a href="tel:+919876543210">+91 98765 43210</a></div>
+            </div>
+            <div class="info-item">
+              <span class="info-ic"><svg class="ic"><use href="#i-pin"/></svg></span>
+              <div><small>Office</small>Bengaluru, Karnataka, India</div>
+            </div>
+            <div class="info-item">
+              <span class="info-ic"><svg class="ic"><use href="#i-clock"/></svg></span>
+              <div><small>Hours</small>Mon – Fri, 9:00 AM – 6:00 PM</div>
+            </div>
+            <div class="help-box">
+              <h4><svg class="ic"><use href="#i-alert"/></svg> Been scammed or hacked?</h4>
+              <ol>
+                <li>Change your passwords immediately.</li>
+                <li>Contact your bank if money is involved.</li>
+                <li>In India, call the Cyber Crime Helpline <strong>1930</strong> or report at <a href="https://cybercrime.gov.in" target="_blank" rel="noopener">cybercrime.gov.in</a>.</li>
+              </ol>
+            </div>
+          </aside>
+
+          <div class="form-card reveal d1" id="formCard">
+            <h3>Send us a message</h3>
+            <p>Fields marked * are required.</p>
+            <form id="contactForm" novalidate>
+              <div class="form-row">
+                <div class="field">
+                  <label for="cName">Full name *</label>
+                  <input type="text" id="cName" name="name" placeholder="Your name" autocomplete="name">
+                  <div class="field-foot"><span class="err">Error</span></div>
+                </div>
+                <div class="field">
+                  <label for="cEmail">Email address *</label>
+                  <input type="email" id="cEmail" name="email" placeholder="you@example.com" autocomplete="email">
+                  <div class="field-foot"><span class="err">Error</span></div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="field">
+                  <label for="cPhone">Phone (optional)</label>
+                  <input type="tel" id="cPhone" name="phone" placeholder="+91 …" autocomplete="tel">
+                  <div class="field-foot"><span class="err">Error</span></div>
+                </div>
+                <div class="field">
+                  <label for="cSubject">Topic *</label>
+                  <select id="cSubject" name="subject">
+                    <option value="">Choose a topic…</option>
+                    <option>General enquiry</option>
+                    <option>Book an awareness workshop</option>
+                    <option>Report a phishing or scam attempt</option>
+                    <option>Security check-up</option>
+                    <option>Partnership</option>
+                    <option>Other</option>
+                  </select>
+                  <div class="field-foot"><span class="err">Error</span></div>
+                </div>
+              </div>
+              <div class="field">
+                <label for="cMessage">Message *</label>
+                <textarea id="cMessage" name="message" maxlength="1000" placeholder="How can we help you?"></textarea>
+                <div class="field-foot"><span class="err">Error</span><span class="count" id="msgCount">0 / 1000</span></div>
+              </div>
+              <label class="consent"><input type="checkbox" id="cConsent" name="consent"> <span>I agree that CyberSafe may contact me about my enquiry. We never share your details.</span></label>
+              <button type="submit" class="btn btn-primary btn-block"><svg class="ic"><use href="#i-send"/></svg> Send message</button>
+            </form>
+            <div class="form-success" id="formSuccess">
+              <div class="quiz-badge"><svg class="ic"><use href="#i-check"/></svg></div>
+              <h3>Message sent!</h3>
+              <p id="successText">Thank you for reaching out. We'll reply soon.</p>
+              <button class="btn btn-ghost" id="sendAnother" type="button">Send another message</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================
+       FOOTER
+       ========================================================= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="#home" class="logo">
+            <span class="logo-mark"><svg class="ic"><use href="#i-shield-check"/></svg></span>
+            <span>Cyber<b>Safe</b></span>
+          </a>
+          <p>Empowering people to stay secure online through awareness, education and practical tools.</p>
+        </div>
+        <div>
+          <h4>Quick links</h4>
+          <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#services">Services</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#tips">Cybersecurity Tips</a></li>
+            <li><a href="#password">Password Checker</a></li>
+            <li><a href="#quiz">Awareness Quiz</a></li>
+            <li><a href="https://cybercrime.gov.in" target="_blank" rel="noopener">Report Cyber Crime</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Stay updated</h4>
+          <ul><li>Get a monthly security tip in your inbox.</li></ul>
+          <form class="news" id="newsForm" novalidate style="margin-top:12px">
+            <label for="newsEmail" class="sr-only">Email address</label>
+            <input type="email" id="newsEmail" placeholder="Your email">
+            <button class="btn btn-primary btn-sm" type="submit">Subscribe</button>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> CyberSafe. All rights reserved.</span>
+        <span>Think before you click. Stay CyberSafe.</span>
+      </div>
+    </div>
+  </footer>
+
+  <button class="to-top" id="toTop" aria-label="Back to top"><svg class="ic"><use href="#i-arrow-up"/></svg></button>
+  <div class="toast" id="toast" role="status"><svg class="ic"><use href="#i-check"/></svg><span id="toastText"></span></div>
+
+  <script>
+  (function () {
+    'use strict';
+
+    /* =========================================================
+       HELPERS
+       ========================================================= */
+    var $ = function (s, c) { return (c || document).querySelector(s); };
+    var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+    function icon(name, cls) { return '<svg class="' + (cls || 'ic') + '" aria-hidden="true"><use href="#i-' + name + '"/></svg>'; }
+    function store(key, value) {
+      try {
+        if (value === undefined) return JSON.parse(localStorage.getItem(key));
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) { return null; }
+    }
+    var toastTimer;
+    function toast(msg) {
+      $('#toastText').textContent = msg;
+      $('#toast').classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () { $('#toast').classList.remove('show'); }, 2600);
+    }
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    $('#year').textContent = new Date().getFullYear();
+
+    /* =========================================================
+       DATA
+       ========================================================= */
+    var THREATS = ['Phishing', 'Ransomware', 'Identity Theft', 'Malware', 'Social Engineering', 'Data Breaches', 'Fake Websites', 'SIM Swap Fraud', 'Spyware', 'UPI Scams'];
+
+    var SERVICES = [
+      { icon: 'users', title: 'Awareness Workshops', text: 'Interactive sessions for schools, colleges and offices that teach people to recognise and avoid online threats.', points: ['Live & online sessions', 'Real-world examples'] },
+      { icon: 'mail', title: 'Phishing Simulation', text: 'Safe, realistic phishing tests that measure how your team responds — followed by friendly, targeted training.', points: ['Custom email campaigns', 'Detailed reports'] },
+      { icon: 'clipboard', title: 'Security Check-ups', text: 'A practical review of your devices, accounts and settings with a clear, prioritised list of fixes.', points: ['Device & account review', 'Easy action plan'] },
+      { icon: 'key', title: 'Password & Identity Protection', text: 'Guidance on password managers, two-factor authentication and protecting your digital identity.', points: ['2FA setup help', 'Breach monitoring advice'] },
+      { icon: 'globe', title: 'Safe Social Media', text: 'Learn how to lock down privacy settings, spot fake profiles and protect children and teens online.', points: ['Privacy settings audit', 'Family safety guides'] },
+      { icon: 'alert', title: 'Incident Response Guidance', text: 'Step-by-step support if you have been hacked or scammed, so you can recover quickly and report correctly.', points: ['Account recovery steps', 'Reporting assistance'] }
+    ];
+
+    var TIP_CATS = [
+      { id: 'all', label: 'All tips' },
+      { id: 'passwords', label: 'Passwords' },
+      { id: 'phishing', label: 'Phishing' },
+      { id: 'devices', label: 'Devices' },
+      { id: 'social', label: 'Social Media' },
+      { id: 'network', label: 'Wi-Fi & Network' }
+    ];
+
+    var TIPS = [
+      { cat: 'passwords', icon: 'key', title: 'Use long passphrases', text: 'Combine four or more random words with numbers and symbols. Length beats complexity — aim for at least 12–16 characters.' },
+      { cat: 'passwords', icon: 'refresh', title: 'Never reuse passwords', text: 'One breached website should not unlock all your accounts. Give every service its own unique password.' },
+      { cat: 'passwords', icon: 'lock', title: 'Use a password manager', text: 'Let a reputable password manager create and store strong passwords so you only need to remember one.' },
+      { cat: 'passwords', icon: 'user-check', title: 'Turn on two-factor authentication', text: 'Add an authenticator app or security key to email, banking and social accounts for a powerful extra layer.' },
+      { cat: 'phishing', icon: 'mail', title: 'Check the sender carefully', text: 'Look closely at email addresses and domains. “paypa1.com” or “amaz0n-support.net” are classic fakes.' },
+      { cat: 'phishing', icon: 'link', title: 'Hover before you click', text: 'Preview links before opening them. If the address looks strange or is shortened, do not click it.' },
+      { cat: 'phishing', icon: 'alert', title: 'Beware of urgency', text: 'Scammers create panic: “Your account will be blocked today!” Pause, then verify through the official app or website.' },
+      { cat: 'devices', icon: 'download', title: 'Keep software updated', text: 'Install updates for your phone, computer, browser and apps promptly — they fix security holes attackers exploit.' },
+      { cat: 'devices', icon: 'smartphone', title: 'Lock and encrypt devices', text: 'Use a PIN, fingerprint or face unlock, and enable device encryption so lost devices do not expose your data.' },
+      { cat: 'devices', icon: 'database', title: 'Back up your data', text: 'Follow the 3-2-1 rule: 3 copies of your data, on 2 different types of storage, with 1 copy kept off-site.' },
+      { cat: 'social', icon: 'users', title: 'Lock down privacy settings', text: 'Review who can see your posts, photos and friends list. Limit public information to the minimum.' },
+      { cat: 'social', icon: 'globe', title: 'Think before you share', text: 'Birthdays, addresses, school names and travel plans help criminals guess passwords or plan scams.' },
+      { cat: 'social', icon: 'message', title: 'Spot fake profiles', text: 'Be cautious of new “friends” who ask for money, gift cards or personal details — even if they look familiar.' },
+      { cat: 'network', icon: 'wifi', title: 'Be careful on public Wi-Fi', text: 'Avoid banking or shopping on open networks. Use your mobile data or a trusted VPN when you must connect.' },
+      { cat: 'network', icon: 'cpu', title: 'Secure your home router', text: 'Change the default admin password, use WPA2/WPA3 encryption and keep the router firmware updated.' }
+    ];
+
+    var QUESTIONS = [
+      { q: 'What is phishing?', options: ['A type of computer hardware', 'A fraudulent attempt to steal sensitive information by pretending to be a trusted source', 'A method for speeding up your internet connection', 'An antivirus scanning technique'], answer: 1, explain: 'Phishing uses fake emails, messages or websites that look legitimate to trick you into revealing passwords, card details or other personal data.' },
+      { q: 'Which of these is the strongest password?', options: ['password123', 'P@ssw0rd', 'Blue!Tiger-Coffee-42-Rain', '12345678'], answer: 2, explain: 'Long passphrases with mixed words, numbers and symbols are far harder to crack than short or common passwords — even ones with symbol substitutions.' },
+      { q: 'What does two-factor authentication (2FA) do?', options: ['Doubles your internet speed', 'Requires a second form of verification in addition to your password', 'Lets two people share one account', 'Automatically changes your password every day'], answer: 1, explain: '2FA asks for something extra — like a code from an app or a fingerprint — so a stolen password alone is not enough to log in.' },
+      { q: 'You receive an urgent email from your “bank” asking you to click a link and verify your account. What should you do?', options: ['Click the link quickly before the account is blocked', 'Reply with your account details', 'Ignore the link and contact the bank using its official app, website or phone number', 'Forward it to all your friends'], answer: 2, explain: 'Banks never ask you to verify sensitive details through email links. Always contact them directly through a channel you trust.' },
+      { q: 'What is the safest way to use public Wi-Fi at a café?', options: ['Do online banking as usual', 'Use a trusted VPN or mobile data for sensitive activities', 'Turn off your device’s firewall', 'Share files with everyone on the network'], answer: 1, explain: 'Public networks can be monitored or faked. A VPN encrypts your traffic, and avoiding sensitive logins on open Wi-Fi reduces risk.' },
+      { q: 'What does the padlock icon (HTTPS) in your browser’s address bar mean?', options: ['The website is guaranteed to be safe and honest', 'The connection between you and the website is encrypted', 'The website has no viruses', 'The website is run by the government'], answer: 1, explain: 'HTTPS only means the connection is encrypted. Scam websites can use HTTPS too, so still check the web address carefully.' },
+      { q: 'Why is it important to install software updates regularly?', options: ['They only change the design', 'They fix security vulnerabilities that attackers could exploit', 'They slow your device down on purpose', 'Updates are not important'], answer: 1, explain: 'Many updates patch known security holes. Delaying updates leaves your device exposed to attacks that are already widely known.' },
+      { q: 'What is ransomware?', options: ['Software that speeds up your computer', 'A free antivirus program', 'Malware that locks or encrypts your files and demands payment', 'A secure backup service'], answer: 2, explain: 'Ransomware holds your data hostage. Regular offline backups and careful clicking are the best defences.' },
+      { q: 'You find a USB drive in the car park outside your office. What should you do?', options: ['Plug it in to find the owner', 'Hand it to your IT or security team without plugging it in', 'Keep it for personal use', 'Plug it into a friend’s computer instead'], answer: 1, explain: 'Attackers sometimes leave infected USB drives on purpose. Never plug unknown devices into your computer.' },
+      { q: 'Someone calls claiming to be from customer support and asks for the OTP sent to your phone. What should you do?', options: ['Share it — they are from support', 'Share only half of the code', 'Never share an OTP; hang up and contact the company yourself', 'Post it on social media to verify'], answer: 2, explain: 'One-time passwords are meant only for you. Genuine companies will never ask for your OTP — sharing it can give scammers access to your account.' }
+    ];
+
+    /* =========================================================
+       TICKER
+       ========================================================= */
+    var tickerHtml = THREATS.map(function (t) { return '<span>' + icon('shield') + t + '</span>'; }).join('');
+    $('#tickerTrack').innerHTML = tickerHtml + tickerHtml;
+
+    /* =========================================================
+       SERVICES RENDER
+       ========================================================= */
+    $('#servicesGrid').innerHTML = SERVICES.map(function (s, i) {
+      return '<article class="card reveal d' + (i % 3) + '">' +
+        '<div class="card-ic">' + icon(s.icon) + '</div>' +
+        '<h3>' + s.title + '</h3><p>' + s.text + '</p>' +
+        '<ul>' + s.points.map(function (p) { return '<li>' + icon('check') + p + '</li>'; }).join('') + '</ul>' +
+        '</article>';
+    }).join('');
+
+    /* =========================================================
+       TIPS RENDER + FILTER + QUICK TIP
+       ========================================================= */
+    var tipsGrid = $('#tipsGrid');
+    var catLabel = {};
+    TIP_CATS.forEach(function (c) { catLabel[c.id] = c.label; });
+
+    $('#tipFilters').innerHTML = TIP_CATS.map(function (c, i) {
+      return '<button class="filter' + (i === 0 ? ' active' : '') + '" role="tab" aria-selected="' + (i === 0) + '" data-filter="' + c.id + '">' + c.label + '</button>';
+    }).join('');
+
+    function renderTips(filter) {
+      var list = TIPS.filter(function (t) { return filter === 'all' || t.cat === filter; });
+      tipsGrid.innerHTML = list.map(function (t, i) {
+        return '<article class="tip" style="animation-delay:' + (i * 0.04) + 's">' +
+          '<div class="tip-top"><span class="tip-ic">' + icon(t.icon) + '</span><span class="tag">' + catLabel[t.cat] + '</span></div>' +
+          '<h3>' + t.title + '</h3><p>' + t.text + '</p></article>';
+      }).join('');
+    }
+    renderTips('all');
+
+    $$('#tipFilters .filter').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        $$('#tipFilters .filter').forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-selected', 'false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        renderTips(btn.dataset.filter);
+      });
+    });
+
+    var lastTip = -1;
+    function showQuickTip() {
+      var i;
+      do { i = Math.floor(Math.random() * TIPS.length); } while (i === lastTip && TIPS.length > 1);
+      lastTip = i;
+      var el = $('#quickTip');
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+      el.textContent = TIPS[i].title + ' — ' + TIPS[i].text;
+    }
+    showQuickTip();
+    $('#nextTip').addEventListener('click', showQuickTip);
+
+    /* =========================================================
+       HEADER, MOBILE MENU, BACK TO TOP
+       ========================================================= */
+    var header = $('#header'), toTop = $('#toTop');
+    function onScroll() {
+      var y = window.scrollY || window.pageYOffset;
+      header.classList.toggle('scrolled', y > 30);
+      toTop.classList.toggle('show', y > 600);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+    var nav = $('#nav'), menuBtn = $('#menuBtn'), backdrop = $('#navBackdrop');
+    function setMenu(open) {
+      nav.classList.toggle('open', open);
+      backdrop.classList.toggle('show', open);
+      menuBtn.setAttribute('aria-expanded', String(open));
+      menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+      menuBtn.innerHTML = icon(open ? 'x' : 'menu');
+      document.body.classList.toggle('lock', open);
+    }
+    menuBtn.addEventListener('click', function () { setMenu(!nav.classList.contains('open')); });
+    backdrop.addEventListener('click', function () { setMenu(false); });
+    $$('#nav a').forEach(function (a) { a.addEventListener('click', function () { setMenu(false); }); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 1080) setMenu(false); });
+
+    /* =========================================================
+       SCROLL EFFECTS: active link, reveal, counters
+       ========================================================= */
+    var navLinks = $$('#nav a:not(.nav-cta)');
+    function animateCount(el) {
+      var target = +el.dataset.count, suffix = el.dataset.suffix || '', start = null, dur = 1400;
+      function step(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / dur, 1);
+        el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3))) + suffix;
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var sectionObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) {
+            navLinks.forEach(function (l) { l.classList.toggle('active', l.getAttribute('href') === '#' + en.target.id); });
+          }
+        });
+      }, { rootMargin: '-45% 0px -50% 0px' });
+      $$('main section[id]').forEach(function (s) { sectionObs.observe(s); });
+
+      var revealObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { en.target.classList.add('in'); revealObs.unobserve(en.target); }
+        });
+      }, { threshold: 0.12 });
+      $$('.reveal').forEach(function (el) { revealObs.observe(el); });
+
+      var countObs = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (en.isIntersecting) { animateCount(en.target); countObs.unobserve(en.target); }
+        });
+      }, { threshold: 0.5 });
+      $$('[data-count]').forEach(function (el) { countObs.observe(el); });
+    } else {
+      $$('.reveal').forEach(function (el) { el.classList.add('in'); });
+      $$('[data-count]').forEach(function (el) { el.textContent = el.dataset.count + (el.dataset.suffix || ''); });
+    }
+
+    /* =========================================================
+       PASSWORD SAFETY CHECKER
+       ========================================================= */
+    var COMMON = ['password', 'passw0rd', '123456', '12345678', '123456789', '1234567890', 'qwerty', 'qwerty123', 'abc123', '111111', '000000', 'letmein', 'welcome', 'admin', 'iloveyou', 'monkey', 'dragon', 'football', 'cricket', 'baseball', 'sunshine', 'princess', 'login', 'master', 'starwars', 'shadow', 'superman', 'trustno1', '1q2w3e4r', 'zaq12wsx', 'india123', 'hello123', 'secret', 'computer', 'internet'];
+    var LEVELS = [
+      { label: 'Very weak', color: '#ef4444' },
+      { label: 'Weak', color: '#f97316' },
+      { label: 'Fair', color: '#f59e0b' },
+      { label: 'Strong', color: '#22c55e' },
+      { label: 'Very strong', color: '#16a34a' }
+    ];
+
+    function normalise(s) {
+      return s.toLowerCase().replace(/@/g, 'a').replace(/0/g, 'o').replace(/[1!|]/g, 'i').replace(/3/g, 'e').replace(/[$5]/g, 's').replace(/7/g, 't');
+    }
+    function isCommon(pw) {
+      if (!pw) return false;
+      var low = pw.toLowerCase(), norm = normalise(pw);
+      return COMMON.some(function (c) {
+        return low.indexOf(c) !== -1 || (c.length >= 5 && norm.indexOf(normalise(c)) !== -1);
+      });
+    }
+    function hasSequence(pw) {
+      var s = pw.toLowerCase();
+      for (var i = 0; i < s.length - 2; i++) {
+        var a = s.charCodeAt(i), b = s.charCodeAt(i + 1), c = s.charCodeAt(i + 2);
+        if ((b - a === 1 && c - b === 1) || (a - b === 1 && b - c === 1)) return true;
+      }
+      return /qwert|asdf|zxcv/.test(s);
+    }
+    function plural(v, unit) { var r = Math.max(1, Math.round(v)); return r + ' ' + unit + (r === 1 ? '' : 's'); }
+    function formatTime(sec) {
+      var MIN = 60, H = 3600, D = 86400, MO = 2629800, Y = 31557600;
+      if (!isFinite(sec)) return 'Billions of years+';
+      if (sec < 1) return 'Instantly';
+      if (sec < MIN) return plural(sec, 'second');
+      if (sec < H) return plural(sec / MIN, 'minute');
+      if (sec < D) return plural(sec / H, 'hour');
+      if (sec < MO) return plural(sec / D, 'day');
+      if (sec < Y) return plural(sec / MO, 'month');
+      var y = sec / Y;
+      if (y < 1000) return plural(y, 'year');
+      if (y < 1e6) return Math.round(y / 1000) + ' thousand years';
+      if (y < 1e9) return Math.round(y / 1e6) + ' million years';
+      return 'Billions of years+';
+    }
+
+    function analyse(pw) {
+      var checks = {
+        length: pw.length >= 12,
+        upper: /[A-Z]/.test(pw),
+        lower: /[a-z]/.test(pw),
+        number: /\d/.test(pw),
+        symbol: /[^A-Za-z0-9]/.test(pw),
+        common: pw.length > 0 && !isCommon(pw)
+      };
+      var pool = (checks.lower ? 26 : 0) + (checks.upper ? 26 : 0) + (checks.number ? 10 : 0) + (checks.symbol ? 33 : 0);
+      var entropy = pw.length ? pw.length * Math.log2(pool || 1) : 0;
+      var repeated = /(.)\1{2,}/.test(pw), sequence = hasSequence(pw);
+      if (repeated) entropy *= 0.8;
+      if (sequence) entropy *= 0.85;
+      if (!checks.common && pw.length) entropy = Math.min(entropy, 12);
+
+      var score;
+      if (entropy < 28) score = 0;
+      else if (entropy < 40) score = 1;
+      else if (entropy < 60) score = 2;
+      else if (entropy < 80) score = 3;
+      else score = 4;
+      if (pw.length < 8) score = Math.min(score, 1);
+      if (!checks.common) score = 0;
+
+      var seconds = Math.pow(2, entropy - 1) / 1e10;
+      var tips = [];
+      if (!checks.length) tips.push('Make it at least 12 characters long (16+ is even better).');
+      if (!checks.upper) tips.push('Add an uppercase letter.');
+      if (!checks.lower) tips.push('Add a lowercase letter.');
+      if (!checks.number) tips.push('Include a number.');
+      if (!checks.symbol) tips.push('Include a symbol such as ! # % or -.');
+      if (!checks.common) tips.push('Avoid common words and patterns like “password”, “qwerty” or “123456”.');
+      if (repeated) tips.push('Avoid repeated characters (aaa, 111).');
+      if (sequence) tips.push('Avoid sequences such as abc, 123 or qwerty.');
+
+      return { checks: checks, entropy: entropy, score: score, seconds: seconds, tips: tips };
+    }
+
+    var pwInput = $('#pwInput'), meterBars = $$('#pwMeter i');
+    function updatePassword() {
+      var pw = pwInput.value;
+      var fb = $('#pwFeedback');
+      fb.className = 'feedback';
+      if (!pw) {
+        meterBars.forEach(function (b) { b.style.background = ''; });
+        $('#pwLabel').textContent = 'Start typing…';
+        $('#pwLabel').style.color = '';
+        $('#pwScore').textContent = 'Score: –/4';
+        $('#pwLen').textContent = '0';
+        $('#pwEntropy').textContent = '0 bits';
+        $('#pwCrack').textContent = '–';
+        $$('#pwChecks li').forEach(function (li) { li.classList.remove('ok'); });
+        fb.innerHTML = icon('bulb') + '<div>Tip: a long passphrase like <strong>Coffee!River-Moon-47</strong> is easier to remember and harder to crack than <strong>P@ss1</strong>.</div>';
+        return;
+      }
+      var r = analyse(pw), lvl = LEVELS[r.score];
+      meterBars.forEach(function (b, i) { b.style.background = i <= r.score ? lvl.color : ''; });
+      $('#pwLabel').textContent = lvl.label;
+      $('#pwLabel').style.color = lvl.color;
+      $('#pwScore').textContent = 'Score: ' + r.score + '/4';
+      $('#pwLen').textContent = pw.length;
+      $('#pwEntropy').textContent = Math.round(r.entropy) + ' bits';
+      $('#pwCrack').textContent = formatTime(r.seconds);
+      $$('#pwChecks li').forEach(function (li) { li.classList.toggle('ok', !!r.checks[li.dataset.check]); });
+
+      if (r.score >= 3 && r.tips.length === 0) {
+        fb.classList.add('is-strong');
+        fb.innerHTML = icon('shield-check') + '<div><strong>Excellent!</strong> This is a strong password. Use it for one account only and store it in a password manager.</div>';
+      } else {
+        fb.classList.add(r.score <= 1 ? 'is-weak' : (r.score === 2 ? 'is-fair' : 'is-strong'));
+        fb.innerHTML = icon(r.score <= 1 ? 'alert' : 'bulb') + '<div><strong>How to improve:</strong><ul>' +
+          r.tips.map(function (t) { return '<li>' + t + '</li>'; }).join('') + '</ul></div>';
+      }
+    }
+    pwInput.addEventListener('input', updatePassword);
+
+    $('#pwToggle').addEventListener('click', function () {
+      var show = pwInput.type === 'password';
+      pwInput.type = show ? 'text' : 'password';
+      this.innerHTML = icon(show ? 'eye-off' : 'eye');
+      this.setAttribute('aria-label', show ? 'Hide password' : 'Show password');
+    });
+
+    /* ---------- Password generator ---------- */
+    var SETS = {
+      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      lower: 'abcdefghijklmnopqrstuvwxyz',
+      number: '0123456789',
+      symbol: '!@#$%^&*()-_=+[]{};:,.?'
+    };
+    function randInt(n) {
+      if (window.crypto && window.crypto.getRandomValues) {
+        var buf = new Uint32Array(1), limit = Math.floor(4294967296 / n) * n, x;
+        do { window.crypto.getRandomValues(buf); x = buf[0]; } while (x >= limit);
+        return x % n;
+      }
+      return Math.floor(Math.random() * n);
+    }
+    function generatePassword() {
+      var len = +$('#genLen').value;
+      var sets = Object.keys(SETS).filter(function (k) { return $('#g-' + k).checked; });
+      if (!sets.length) { $('#g-lower').checked = true; sets = ['lower']; }
+      var chars = sets.map(function (k) { return SETS[k][randInt(SETS[k].length)]; });
+      var all = sets.map(function (k) { return SETS[k]; }).join('');
+      while (chars.length < len) chars.push(all[randInt(all.length)]);
+      for (var i = chars.length - 1; i > 0; i--) {
+        var j = randInt(i + 1), t = chars[i]; chars[i] = chars[j]; chars[j] = t;
+      }
+      $('#genOut').textContent = chars.join('');
+    }
+    $('#genLen').addEventListener('input', function () { $('#genLenVal').textContent = this.value; generatePassword(); });
+    $$('.gen-opts input').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        if (!$$('.gen-opts input').some(function (c) { return c.checked; })) {
+          cb.checked = true;
+          toast('Keep at least one character type selected.');
+          return;
+        }
+        generatePassword();
+      });
+    });
+    $('#genBtn').addEventListener('click', generatePassword);
+    $('#genUse').addEventListener('click', function () {
+      pwInput.value = $('#genOut').textContent;
+      updatePassword();
+      pwInput.focus({ preventScroll: true });
+      $('#pwInput').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      toast('Generated password loaded into the checker.');
+    });
+
+    function copyText(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text);
+      }
+      return new Promise(function (resolve, reject) {
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy') ? resolve() : reject(); } catch (e) { reject(e); }
+        document.body.removeChild(ta);
+      });
+    }
+    $('#genCopy').addEventListener('click', function () {
+      copyText($('#genOut').textContent).then(function () { toast('Password copied to clipboard.'); }, function () { toast('Copy failed — please select and copy manually.'); });
+    });
+    generatePassword();
+
+    /* =========================================================
+       CYBERSECURITY AWARENESS QUIZ
+       ========================================================= */
+    var quizEl = $('#quizBody');
+    var qs = [], cur = 0, score = 0, answers = [];
+    var RING = 2 * Math.PI * 70;
+
+    function renderIntro() {
+      var best = store('cybersafe_best');
+      quizEl.innerHTML =
+        '<div class="quiz-intro">' +
+          '<div class="quiz-badge">' + icon('shield-check') + '</div>' +
+          '<h3>Cybersecurity Awareness Quiz</h3>' +
+          '<p>Can you spot a scam, choose a safe password and protect your accounts? Let’s find out.</p>' +
+          '<div class="quiz-meta">' +
+            '<span>' + icon('clipboard') + QUESTIONS.length + ' questions</span>' +
+            '<span>' + icon('clock') + 'About 3 minutes</span>' +
+            '<span>' + icon('zap') + 'Instant feedback</span>' +
+          '</div>' +
+          '<button class="btn btn-primary" id="startQuiz">Start the quiz ' + icon('arrow-right') + '</button>' +
+          (best !== null ? '<p class="best">Your best score: ' + best + '%</p>' : '') +
+        '</div>';
+      $('#startQuiz').addEventListener('click', startQuiz);
+    }
+
+    function startQuiz() {
+      qs = shuffle(QUESTIONS).map(function (q) {
+        return {
+          q: q.q, explain: q.explain,
+          opts: shuffle(q.options.map(function (t, i) { return { t: t, correct: i === q.answer }; }))
+        };
+      });
+      cur = 0; score = 0; answers = [];
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      var q = qs[cur], last = cur === qs.length - 1;
+      quizEl.innerHTML =
+        '<div class="quiz-top"><span>' + icon('clipboard') + 'Question ' + (cur + 1) + ' of ' + qs.length + '</span><span id="quizScore">' + icon('award') + 'Score: ' + score + '</span></div>' +
+        '<div class="progress"><i id="quizProgress" style="width:' + (cur / qs.length * 100) + '%"></i></div>' +
+        '<h3 class="q-text">' + q.q + '</h3>' +
+        '<div class="options">' + q.opts.map(function (o, i) {
+          return '<button class="opt" data-i="' + i + '" style="animation-delay:' + (i * 0.05) + 's"><span class="letter">' + 'ABCD'.charAt(i) + '</span><span>' + o.t + '</span></button>';
+        }).join('') + '</div>' +
+        '<div class="explain" id="explain"></div>' +
+        '<div class="quiz-foot">' +
+          '<button class="btn btn-ghost btn-sm" id="restartQuiz">' + icon('refresh') + 'Restart</button>' +
+          '<button class="btn btn-primary" id="nextQ" disabled>' + (last ? 'See my results' : 'Next question') + icon('arrow-right') + '</button>' +
+        '</div>';
+      $$('.opt', quizEl).forEach(function (b) { b.addEventListener('click', function () { choose(+b.dataset.i); }); });
+      $('#nextQ').addEventListener('click', function () {
+        if (cur < qs.length - 1) { cur++; renderQuestion(); } else { renderResult(); }
+      });
+      $('#restartQuiz').addEventListener('click', startQuiz);
+    }
+
+    function choose(i) {
+      var q = qs[cur], btns = $$('.opt', quizEl), ok = q.opts[i].correct;
+      btns.forEach(function (b, j) {
+        b.disabled = true;
+        if (q.opts[j].correct) b.classList.add('correct');
+        else if (j !== i) b.classList.add('dim');
+      });
+      if (ok) score++; else btns[i].classList.add('wrong');
+      answers.push({ q: q.q, chosen: q.opts[i].t, correct: q.opts.filter(function (o) { return o.correct; })[0].t, ok: ok });
+
+      var ex = $('#explain');
+      ex.innerHTML = '<strong>' + icon(ok ? 'check' : 'x') + (ok ? 'Correct!' : 'Not quite.') + '</strong> ' + q.explain;
+      ex.classList.toggle('bad', !ok);
+      ex.classList.add('show');
+      $('#quizScore').innerHTML = icon('award') + 'Score: ' + score;
+      $('#quizProgress').style.width = ((cur + 1) / qs.length * 100) + '%';
+      $('#nextQ').disabled = false;
+      $('#nextQ').focus({ preventScroll: true });
+    }
+
+    function renderResult() {
+      var pct = Math.round(score / qs.length * 100);
+      var prevBest = store('cybersafe_best');
+      var best = Math.max(pct, prevBest || 0);
+      store('cybersafe_best', best);
+
+      var rank, msg;
+      if (pct >= 90) { rank = 'Cyber Guardian'; msg = 'Outstanding! You have excellent cybersecurity awareness. Share what you know to help others stay safe.'; }
+      else if (pct >= 70) { rank = 'Security Savvy'; msg = 'Great job! You know the essentials. Review the tips below to close the remaining gaps.'; }
+      else if (pct >= 50) { rank = 'Getting There'; msg = 'Good start! A few habits need attention — check our Cybersecurity Tips section to level up.'; }
+      else { rank = 'At Risk'; msg = 'Cyber criminals target people who are unaware. Read our tips and try the quiz again — you will improve quickly!'; }
+
+      quizEl.innerHTML =
+        '<div class="quiz-result">' +
+          '<div class="score-ring">' +
+            '<svg viewBox="0 0 160 160" aria-hidden="true">' +
+              '<defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs>' +
+              '<circle cx="80" cy="80" r="70" fill="none" stroke="#e8eef8" stroke-width="12"/>' +
+              '<circle class="ring-val" id="ringVal" cx="80" cy="80" r="70" fill="none" stroke="url(#ringGrad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + RING + '" stroke-dashoffset="' + RING + '"/>' +
+            '</svg>' +
+            '<div class="val">' + score + '/' + qs.length + '</div>' +
+          '</div>' +
+          '<span class="rank">' + rank + '</span>' +
+          '<h3>You scored ' + pct + '%</h3>' +
+          '<p>' + msg + '</p>' +
+          (pct > (prevBest || 0) && prevBest !== null ? '<p class="best">New personal best! 🎉</p>' : '<p class="best">Best score: ' + best + '%</p>') +
+          '<div class="result-actions">' +
+            '<button class="btn btn-primary" id="retryQuiz">' + icon('refresh') + 'Try again</button>' +
+            '<button class="btn btn-ghost" id="reviewBtn">' + icon('eye') + 'Review answers</button>' +
+            '<a class="btn btn-ghost" href="#tips">' + icon('bulb') + 'Read tips</a>' +
+          '</div>' +
+          '<div class="review" id="review">' + answers.map(function (a, i) {
+            return '<div class="review-item' + (a.ok ? '' : ' bad') + '"><b>' + (i + 1) + '. ' + a.q + '</b>' +
+              '<span>Your answer: ' + a.chosen + '</span>' +
+              (a.ok ? '' : '<span>Correct answer: ' + a.correct + '</span>') + '</div>';
+          }).join('') + '</div>' +
+        '</div>';
+
+      setTimeout(function () {
+        var ring = $('#ringVal');
+        if (ring) ring.style.strokeDashoffset = RING * (1 - pct / 100);
+      }, 60);
+      $('#retryQuiz').addEventListener('click', startQuiz);
+      $('#reviewBtn').addEventListener('click', function () {
+        var r = $('#review'), open = r.classList.toggle('show');
+        this.innerHTML = icon(open ? 'eye-off' : 'eye') + (open ? 'Hide answers' : 'Review answers');
+      });
+    }
+    renderIntro();
+
+    /* =========================================================
+       CONTACT FORM
+       ========================================================= */
+    var form = $('#contactForm');
+    var RULES = {
+      name: function (v) { return v.trim().length >= 2 || 'Please enter your name (at least 2 characters).'; },
+      email: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim()) || 'Please enter a valid email address.'; },
+      phone: function (v) { return v.trim() === '' || /^[+\d][\d\s\-()]{6,17}$/.test(v.trim()) || 'Please enter a valid phone number.'; },
+      subject: function (v) { return v !== '' || 'Please choose a topic.'; },
+      message: function (v) { return v.trim().length >= 10 || 'Your message should be at least 10 characters.'; }
+    };
+    function validateField(name) {
+      var el = form.elements[name], field = el.closest('.field'), res = RULES[name](el.value);
+      if (res !== true) {
+        field.classList.add('error');
+        field.querySelector('.err').textContent = res;
+        return false;
+      }
+      field.classList.remove('error');
+      return true;
+    }
+    Object.keys(RULES).forEach(function (name) {
+      var el = form.elements[name];
+      el.addEventListener(el.tagName === 'SELECT' ? 'change' : 'input', function () {
+        if (el.closest('.field').classList.contains('error')) validateField(name);
+      });
+      el.addEventListener('blur', function () { if (el.value) validateField(name); });
+    });
+    form.elements.message.addEventListener('input', function () {
+      $('#msgCount').textContent = this.value.length + ' / 1000';
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var valid = Object.keys(RULES).map(validateField).every(Boolean);
+      if (!valid) {
+        var firstErr = form.querySelector('.field.error input, .field.error select, .field.error textarea');
+        if (firstErr) firstErr.focus();
+        toast('Please fix the highlighted fields.');
+        return;
+      }
+      if (!form.elements.consent.checked) {
+        toast('Please tick the consent box to continue.');
+        form.elements.consent.focus();
+        return;
+      }
+      var entry = {
+        name: form.elements.name.value.trim(),
+        email: form.elements.email.value.trim(),
+        phone: form.elements.phone.value.trim(),
+        subject: form.elements.subject.value,
+        message: form.elements.message.value.trim(),
+        date: new Date().toISOString()
+      };
+      var saved = store('cybersafe_messages') || [];
+      saved.push(entry);
+      store('cybersafe_messages', saved);
+
+      $('#successText').textContent = 'Thank you, ' + entry.name.split(' ')[0] + '! Your message about “' + entry.subject + '” has been received. We will reply to ' + entry.email + ' soon.';
+      $('#formCard').classList.add('sent');
+      form.reset();
+      $('#msgCount').textContent = '0 / 1000';
+    });
+    $('#sendAnother').addEventListener('click', function () {
+      $('#formCard').classList.remove('sent');
+      form.elements.name.focus();
+    });
+
+    /* =========================================================
+       NEWSLETTER
+       ========================================================= */
+    $('#newsForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = $('#newsEmail'), v = input.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) { toast('Please enter a valid email address.'); input.focus(); return; }
+      var subs = store('cybersafe_subscribers') || [];
+      if (subs.indexOf(v) === -1) subs.push(v);
+      store('cybersafe_subscribers', subs);
+      input.value = '';
+      toast('Subscribed! Watch your inbox for security tips.');
+    });
+  })();
+  </script>
+</body>
+</html>
